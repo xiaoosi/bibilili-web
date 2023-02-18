@@ -1,0 +1,17 @@
+{
+  "name": "clear",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "typescript": "^4.9.5"
+  },
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs"
+  },
+  "devDependencies": {
+    "rollup": "^3.17.0",
+    "rollup-plugin-typescript2": "^0.34.1"
+  }
+}
