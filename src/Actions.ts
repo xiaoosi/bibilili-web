@@ -1,4 +1,4 @@
-import { ContentEle } from "./Ele";
+import { ContentEle, VideoAreaEle } from "./Ele";
 import {
   ContentMouseleave,
   moveMouseOnVideo,
@@ -24,10 +24,9 @@ export function pause() {
 
 // 显示状态
 export function showDetailMoment() {
-  console.log("show")
   moveMouseOnVideo();
 }
 // 隐藏状态
 export function hideDetail() {
-  ContentEle.dispatchEvent(ContentMouseleave);
+  VideoAreaEle.dispatchEvent(ContentMouseleave);
 }

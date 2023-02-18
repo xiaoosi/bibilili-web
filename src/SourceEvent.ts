@@ -28,6 +28,4 @@ export const moveMouseOnVideo = () => {
 };
 
 // 鼠标移出，detail隐藏
-export const ContentMouseleave = new MouseEvent("mouseleave", {
-  bubbles: true,
-});
+export const ContentMouseleave = new MouseEvent("mouseleave");
