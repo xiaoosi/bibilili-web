@@ -6,3 +6,6 @@ export function isPlay() {
 export function isShowDetail() {
   return !ContentEle.classList.contains("bpx-state-no-cursor");
 }
+export function log(str: string) {
+  console.log("bibilili-web: ", str);
+}

@@ -1,5 +1,9 @@
 import { ContentEle, VideoAreaEle } from "./Ele";
 import {
+  keyDDownEnv,
+  keyDUpEnv,
+  keyFDownEnv,
+  keyFUpEnv,
   leaveMouseFromVidee,
   moveMouseOnVideo,
   spaceDownEnv,
@@ -29,4 +33,14 @@ export function showDetailMoment() {
 // 隐藏状态
 export function hideDetail() {
   leaveMouseFromVidee();
+}
+
+export function showHideBullet() {
+  document.dispatchEvent(keyDDownEnv);
+  document.dispatchEvent(keyDUpEnv);
+}
+
+export function fullScreen() {
+  document.dispatchEvent(keyFDownEnv);
+  document.dispatchEvent(keyFUpEnv);
 }

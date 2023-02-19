@@ -14,7 +14,7 @@ export const VideoEle = getElementSafe(
 function getElementSafe(parent: Element | Document, query: string) {
   const out = parent.querySelector(query);
   if (!out) {
-    throw new Error("test");
+    throw new Error("get element error: " + query);
   }
   return out;
 }

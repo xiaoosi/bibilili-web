@@ -10,6 +10,24 @@ export const spaceUpEnv = new KeyboardEvent("keyup", {
   bubbles: true,
 });
 
+export const keyDDownEnv = new KeyboardEvent("keydown", {
+  keyCode: 68,
+  bubbles: true,
+});
+export const keyDUpEnv = new KeyboardEvent("keyup", {
+  keyCode: 68,
+  bubbles: true,
+});
+
+export const keyFDownEnv = new KeyboardEvent("keydown", {
+  keyCode: 70,
+  bubbles: true,
+});
+export const keyFUpEnv = new KeyboardEvent("keyup", {
+  keyCode: 70,
+  bubbles: true,
+});
+
 // 鼠标移动事件，可以显示视频信息
 export const moveMouseOnVideo = () => {
   const position = VideoEle.getBoundingClientRect();
