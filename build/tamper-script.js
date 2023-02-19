@@ -49,11 +49,11 @@
       keyCode: 68,
       bubbles: true,
   });
-  new KeyboardEvent("keydown", {
+  const keyFDownEnv = new KeyboardEvent("keydown", {
       keyCode: 70,
       bubbles: true,
   });
-  new KeyboardEvent("keyup", {
+  const keyFUpEnv = new KeyboardEvent("keyup", {
       keyCode: 70,
       bubbles: true,
   });
@@ -101,6 +101,10 @@
   function showHideBullet() {
       document.dispatchEvent(keyDDownEnv);
       document.dispatchEvent(keyDUpEnv);
+  }
+  function fullScreen() {
+      document.dispatchEvent(keyFDownEnv);
+      document.dispatchEvent(keyFUpEnv);
   }
 
   // 触发事件
@@ -206,6 +210,7 @@
           showHideBullet();
       },
       onDoubleTap2() {
+          fullScreen();
       },
   });
   log("已装载");
