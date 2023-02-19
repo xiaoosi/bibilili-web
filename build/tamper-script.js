@@ -49,11 +49,11 @@
       keyCode: 68,
       bubbles: true,
   });
-  const keyFDownEnv = new KeyboardEvent("keydown", {
+  new KeyboardEvent("keydown", {
       keyCode: 70,
       bubbles: true,
   });
-  const keyFUpEnv = new KeyboardEvent("keyup", {
+  new KeyboardEvent("keyup", {
       keyCode: 70,
       bubbles: true,
   });
@@ -102,9 +102,77 @@
       document.dispatchEvent(keyDDownEnv);
       document.dispatchEvent(keyDUpEnv);
   }
-  function fullScreen() {
-      document.dispatchEvent(keyFDownEnv);
-      document.dispatchEvent(keyFUpEnv);
+
+  // 触发事件
+  function registerEvent(target, em) {
+      let stateMap;
+      (function (stateMap) {
+          stateMap[stateMap["none"] = 0] = "none";
+          stateMap[stateMap["ready"] = 1] = "ready";
+          stateMap[stateMap["Tap1"] = 2] = "Tap1";
+          stateMap[stateMap["DoubleTap1"] = 3] = "DoubleTap1";
+          stateMap[stateMap["Tap2"] = 4] = "Tap2";
+          stateMap[stateMap["Tap2Temp"] = 5] = "Tap2Temp";
+          stateMap[stateMap["DoubleTap2"] = 6] = "DoubleTap2";
+      })(stateMap || (stateMap = {}));
+      let state = stateMap.none;
+      let noneSt = 0;
+      let doubeTap2St = 0;
+      target.addEventListener("touchstart", (e) => {
+          var _a, _b;
+          // 屏蔽click事件
+          e.preventDefault();
+          const touchE = e;
+          if (state === stateMap.none) {
+              state = stateMap.ready;
+              noneSt = setTimeout(() => {
+                  var _a;
+                  state = stateMap.Tap1;
+                  // 触发单击事件
+                  (_a = em.onTap1) === null || _a === void 0 ? void 0 : _a.call(em);
+                  state = stateMap.none;
+              }, 200);
+          }
+          else if (state === stateMap.ready) {
+              clearTimeout(noneSt);
+              if (touchE.targetTouches.length === 1) {
+                  state = stateMap.DoubleTap1;
+                  // 触发单指双击事件
+                  (_a = em.onDoubleTap1) === null || _a === void 0 ? void 0 : _a.call(em);
+                  state = stateMap.none;
+              }
+              else if (touchE.targetTouches.length === 2) {
+                  state = stateMap.Tap2Temp;
+                  doubeTap2St = setTimeout(() => {
+                      var _a;
+                      state = stateMap.Tap2;
+                      // 触发双指单击事件
+                      (_a = em.onTap2) === null || _a === void 0 ? void 0 : _a.call(em);
+                      state = stateMap.none;
+                  }, 200);
+              }
+          }
+          else if (state === stateMap.Tap2Temp) {
+              if (touchE.targetTouches.length === 2) {
+                  clearTimeout(doubeTap2St);
+                  state = stateMap.DoubleTap2;
+                  // 触发双指双击击事件
+                  (_b = em.onDoubleTap2) === null || _b === void 0 ? void 0 : _b.call(em);
+                  state = stateMap.none;
+              }
+          }
+          else {
+              state = stateMap.none;
+          }
+      });
+      target.addEventListener("touchend", (e) => {
+          // 屏蔽click事件
+          e.preventDefault();
+      });
+      target.addEventListener("touchcancel", (e) => {
+          // 屏蔽click事件
+          e.preventDefault();
+      });
   }
 
   function isPlay() {
@@ -117,58 +185,29 @@
       console.log("bibilili-web: ", str);
   }
 
-  function registerEvent() {
-      log("load script~");
-      // 是否有前一次点击
-      let hasPreTouch = false;
-      VideoEle.addEventListener("touchstart", (e) => {
-          // 屏蔽click事件
-          e.preventDefault();
-          const touchE = e;
-          if (touchE.targetTouches.length === 1) {
-              if (hasPreTouch) {
-                  // 双击
-                  hasPreTouch = false;
-                  isPlay() ? pause() : play();
-                  return;
-              }
-              // 单击
-              hasPreTouch = true;
-              setTimeout(() => {
-                  if (hasPreTouch) {
-                      hasPreTouch = false;
-                      // 显示/隐藏详情
-                      isShowDetail() ? hideDetail() : showDetailMoment();
-                  }
-              }, 200);
-          }
-          else if (touchE.targetTouches.length === 2) {
-              // 双指
-              showHideBullet();
-          }
-          else if (touchE.targetTouches.length === 3) {
-              // 三指
-              fullScreen();
-          }
-      });
-      VideoEle.addEventListener("touchend", (e) => {
-          // 屏蔽click事件
-          e.preventDefault();
-          const touchE = e;
-          if (touchE.targetTouches.length === 1) ;
-          else if (touchE.targetTouches.length === 2) ;
-          else if (touchE.targetTouches.length === 3) ;
-      });
-      VideoEle.addEventListener("touchcancel", (e) => {
-          // 屏蔽click事件
-          e.preventDefault();
-          const touchE = e;
-          if (touchE.targetTouches.length === 1) ;
-          else if (touchE.targetTouches.length === 2) ;
-          else if (touchE.targetTouches.length === 3) ;
-      });
-      log("已装载");
-  }
-  registerEvent();
+  log("load script~");
+  /*  点击出现进度条
+   *  双击暂停
+   *  双指点击显示弹幕
+   *  三指单机全屏/退出全屏
+   *  上下滑动调节音量
+   *  左右滑动调节进度
+   *  长按快进
+   *
+   */
+  registerEvent(VideoEle, {
+      onTap1() {
+          isShowDetail() ? hideDetail() : showDetailMoment();
+      },
+      onDoubleTap1() {
+          isPlay() ? pause() : play();
+      },
+      onTap2() {
+          showHideBullet();
+      },
+      onDoubleTap2() {
+      },
+  });
+  log("已装载");
 
 })();
