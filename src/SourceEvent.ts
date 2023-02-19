@@ -1,4 +1,4 @@
-import { ContentEle, VideoEle } from "./Ele";
+import { ContentEle, VideoAreaEle, VideoEle } from "./Ele";
 
 // 空格事件
 export const spaceDownEnv = new KeyboardEvent("keydown", {
@@ -28,4 +28,6 @@ export const moveMouseOnVideo = () => {
 };
 
 // 鼠标移出，detail隐藏
-export const ContentMouseleave = new MouseEvent("mouseleave");
+export const leaveMouseFromVidee = () => {
+  VideoAreaEle.dispatchEvent(new MouseEvent("mouseleave"));
+};

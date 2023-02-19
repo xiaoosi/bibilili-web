@@ -48,7 +48,9 @@
       }));
   };
   // 鼠标移出，detail隐藏
-  const ContentMouseleave = new MouseEvent("mouseleave");
+  const leaveMouseFromVidee = () => {
+      VideoAreaEle.dispatchEvent(new MouseEvent("mouseleave"));
+  };
 
   // 播放
   function play() {
@@ -70,7 +72,7 @@
   }
   // 隐藏状态
   function hideDetail() {
-      VideoAreaEle.dispatchEvent(ContentMouseleave);
+      leaveMouseFromVidee();
   }
 
   function isPlay() {

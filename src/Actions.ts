@@ -1,6 +1,6 @@
 import { ContentEle, VideoAreaEle } from "./Ele";
 import {
-  ContentMouseleave,
+  leaveMouseFromVidee,
   moveMouseOnVideo,
   spaceDownEnv,
   spaceUpEnv,
@@ -28,5 +28,5 @@ export function showDetailMoment() {
 }
 // 隐藏状态
 export function hideDetail() {
-  VideoAreaEle.dispatchEvent(ContentMouseleave);
+  leaveMouseFromVidee();
 }
