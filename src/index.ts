@@ -30,7 +30,7 @@ registerEvent(VideoEle, {
     showHideBullet();
   },
   onDoubleTap2() {
-    fullScreen;
+    fullScreen();
   },
 });
 
