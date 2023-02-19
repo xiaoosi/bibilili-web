@@ -4,13 +4,21 @@
   const BiliPlayerEle = getElementSafe(document, "#bilibili-player");
   const ContentEle = getElementSafe(BiliPlayerEle, ".bpx-player-container");
   const VideoAreaEle = getElementSafe(ContentEle, ".bpx-player-video-area");
-  const VideoEle = getElementSafe(VideoAreaEle, ".bpx-player-primary-area video");
+  const VideoEle = getElementSafe(VideoAreaEle, [".bpx-player-primary-area video", ".bpx-player-primary-area bwp-video"]);
   function getElementSafe(parent, query) {
-      const out = parent.querySelector(query);
-      if (!out) {
-          throw new Error("get element error: " + query);
+      let queryList = [];
+      if (typeof query === "string") {
+          queryList = [query];
       }
-      return out;
+      else {
+          queryList = query;
+      }
+      for (const q of queryList) {
+          const out = parent.querySelector(q);
+          if (out)
+              return out;
+      }
+      throw new Error("get element error: " + JSON.stringify(queryList));
   }
 
   // 空格事件
