@@ -9,12 +9,18 @@ export const VideoAreaEle = getElementSafe(
 );
 export const VideoEle = getElementSafe(
   VideoAreaEle,
-  ".bpx-player-primary-area video"
+  [".bpx-player-primary-area video", ".bpx-player-primary-area bwp-video"]
 );
-function getElementSafe(parent: Element | Document, query: string) {
-  const out = parent.querySelector(query);
-  if (!out) {
-    throw new Error("get element error: " + query);
+function getElementSafe(parent: Element | Document, query: string | string[]) {
+  let queryList: string[] = [];
+  if (typeof query === "string") {
+    queryList = [query];
+  } else {
+    queryList = query;
   }
-  return out;
+  for (const q of queryList) {
+    const out = parent.querySelector(q);
+    if (out) return out;
+  }
+  throw new Error("get element error: " + JSON.stringify(queryList));
 }
