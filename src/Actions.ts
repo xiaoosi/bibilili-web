@@ -14,16 +14,18 @@ import {
 export function play() {
   // if (isPlay()) return;
   // 获取到空格按钮绑定的播放事件
-  document.dispatchEvent(spaceDownEnv);
-  document.dispatchEvent(spaceUpEnv);
+  // document.dispatchEvent(spaceDownEnv);
+  // document.dispatchEvent(spaceUpEnv);
+  window.player.play();
 }
 
 // 暂停
 export function pause() {
   // if (!isPlay()) return;
   // 获取到空格按钮绑定的播放事件
-  document.dispatchEvent(spaceDownEnv);
-  document.dispatchEvent(spaceUpEnv);
+  // document.dispatchEvent(spaceDownEnv);
+  // document.dispatchEvent(spaceUpEnv);
+  window.player.pause();
 }
 
 // 显示状态

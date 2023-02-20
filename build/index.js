@@ -22,11 +22,11 @@
   }
 
   // 空格事件
-  const spaceDownEnv = new KeyboardEvent("keydown", {
+  new KeyboardEvent("keydown", {
       keyCode: 32,
       bubbles: true,
   });
-  const spaceUpEnv = new KeyboardEvent("keyup", {
+  new KeyboardEvent("keyup", {
       keyCode: 32,
       bubbles: true,
   });
@@ -69,15 +69,17 @@
   function play() {
       // if (isPlay()) return;
       // 获取到空格按钮绑定的播放事件
-      document.dispatchEvent(spaceDownEnv);
-      document.dispatchEvent(spaceUpEnv);
+      // document.dispatchEvent(spaceDownEnv);
+      // document.dispatchEvent(spaceUpEnv);
+      window.player.play();
   }
   // 暂停
   function pause() {
       // if (!isPlay()) return;
       // 获取到空格按钮绑定的播放事件
-      document.dispatchEvent(spaceDownEnv);
-      document.dispatchEvent(spaceUpEnv);
+      // document.dispatchEvent(spaceDownEnv);
+      // document.dispatchEvent(spaceUpEnv);
+      window.player.pause();
   }
   // 显示状态
   function showDetailMoment() {
