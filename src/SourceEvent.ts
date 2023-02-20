@@ -28,6 +28,15 @@ export const keyFUpEnv = new KeyboardEvent("keyup", {
   bubbles: true,
 });
 
+export const ArrowRightDown = new KeyboardEvent("keydown", {
+  keyCode: 39,
+  bubbles: true,
+});
+export const ArrowRightUp = new KeyboardEvent("keyup", {
+  keyCode: 39,
+  bubbles: true,
+});
+
 // 鼠标移动事件，可以显示视频信息
 export const moveMouseOnVideo = () => {
   const position = VideoEle.getBoundingClientRect();

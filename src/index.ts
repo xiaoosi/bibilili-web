@@ -7,19 +7,18 @@ import {
   showHideBullet,
 } from "./Actions";
 import { VideoEle } from "./Ele";
-import { registerEvent } from "./EventBus";
+import { registerTapEvent, registerTouchMoveEvent } from "./Events";
 import { isPlay, isShowDetail, log } from "./utils";
 log("load script~");
 /*  点击出现进度条
  *  双击暂停
- *  双指点击显示弹幕
- *  三指单机全屏/退出全屏
+ *  双指单击显示弹幕
+ *  双指双击全屏/退出全屏
  *  上下滑动调节音量
  *  左右滑动调节进度
  *  长按快进
- *
  */
-registerEvent(VideoEle, {
+registerTapEvent(VideoEle, {
   onTap1() {
     isShowDetail() ? hideDetail() : showDetailMoment();
   },
@@ -33,5 +32,5 @@ registerEvent(VideoEle, {
     fullScreen();
   },
 });
-
+registerTouchMoveEvent(VideoEle);
 log("已装载");

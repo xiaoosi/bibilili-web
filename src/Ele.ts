@@ -12,10 +12,8 @@ export const VideoEle = getElementSafe(VideoAreaEle, [
   ".bpx-player-primary-area bwp-video",
 ]);
 
-export const ProgressEle = getElementSafe(
-  BiliPlayerEle,
-  ".bpx-player-progress-wrap"
-);
+export const ProgressEleLazy = () =>
+  getElementSafe(BiliPlayerEle, ".bpx-player-progress-wrap");
 
 function getElementSafe(parent: Element | Document, query: string | string[]) {
   let queryList: string[] = [];
