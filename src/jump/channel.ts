@@ -12,3 +12,6 @@ export function onMessage(f: (msg: string) => any) {
     f(location.hash.slice(1));
   });
 }
+
+const BC_NAME = "bibilili-web";
+export const BC = new BroadcastChannel(BC_NAME);

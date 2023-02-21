@@ -1,27 +1,41 @@
 // 优化页面跳转,实现单播放实例
 
 import { log } from "../touch/utils";
-import { Channel, onMessage } from "./channel";
+import { BC, Channel, onMessage } from "./channel";
 
 export function intercept() {
   // 劫持所有跳转到video页的链接
 
   let newW: Window | null = null;
 
+  // 同步newW
+  // setInterval(() => {
+  //   BC.postMessage({
+  //     newW
+  //   });
+  // }, 500);
+
+  window.name = window.location.href;
+
   function openInOneTab(link: string) {
     if (newW && !newW.closed) {
       const bvid = link.split("/").filter((e) => e.startsWith("BV"))?.[0];
-      newW.name = Math.random() + "";
-      new Channel(newW).sendMessage(
-        JSON.stringify({
-          bvid,
-          WindowName: newW.name,
-        })
-      );
-      newW.focus();
+      // newW.name = Math.random() + "";
+      new Channel(newW).sendMessage(`${bvid}-${window.name}`);
+      // // newW.focus();
+      window.open("", "aaaa");
       return;
     }
-    newW = window.open(link, "a");
+    if (window.location.host === "www.bilibili.com") {
+      // 不跨源
+      newW = window.open(new URL(link).pathname, "aaaa");
+    } else {
+      newW = window.open(link, "aaaa");
+    }
+    setTimeout(() => {
+      // @ts-ignore
+      newW.SRCWindowName = window.name;
+    }, 1000);
   }
 
   const linkMapVisited = new Map<Element, boolean>();
@@ -47,8 +61,13 @@ export function intercept() {
 
 export function listen() {
   onMessage((msg) => {
-    const { bvid, WindowName } = JSON.parse(msg);
+    const [bvid, SRCWindowName] = msg.split("-");
     log("load bv: " + bvid);
     window.player.reload({ bvid: bvid });
+    window.SRCWindowName = SRCWindowName;
   });
+  BC.onmessage = (e) => {
+    log("???");
+    console.log(e);
+  };
 }

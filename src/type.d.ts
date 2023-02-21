@@ -9,6 +9,7 @@ declare global {
       getVolume: () => number;
       reload: (option: { bvid: string; p?: number }) => any;
     };
+    SRCWindowName: string;
   }
 }
 export {};

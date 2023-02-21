@@ -12,6 +12,19 @@
 (function () {
   'use strict';
 
+  function injectAddBTN() {
+      const btn = document.createElement("button");
+      btn.innerText = "返回";
+      btn.style.setProperty("position", "fixed");
+      btn.style.setProperty("top", "0");
+      btn.style.setProperty("bottom", "0");
+      btn.addEventListener("click", () => {
+          window.open("", window.SRCWindowName);
+          window.player.pause();
+      });
+      document.body.appendChild(btn);
+  }
+
   function getEle() {
       const BiliPlayerEle = getElementSafe(document, "#bilibili-player");
       const ContentEle = getElementSafe(BiliPlayerEle, ".bpx-player-container");
@@ -70,20 +83,41 @@
           f(location.hash.slice(1));
       });
   }
+  const BC_NAME = "bibilili-web";
+  const BC = new BroadcastChannel(BC_NAME);
 
   // 优化页面跳转,实现单播放实例
   function intercept() {
       // 劫持所有跳转到video页的链接
       let newW = null;
+      // 同步newW
+      // setInterval(() => {
+      //   BC.postMessage({
+      //     newW
+      //   });
+      // }, 500);
+      window.name = window.location.href;
       function openInOneTab(link) {
           var _a;
           if (newW && !newW.closed) {
               const bvid = (_a = link.split("/").filter((e) => e.startsWith("BV"))) === null || _a === void 0 ? void 0 : _a[0];
-              new Channel(newW).sendMessage(bvid);
-              newW.focus();
+              // newW.name = Math.random() + "";
+              new Channel(newW).sendMessage(`${bvid}-${window.name}`);
+              // // newW.focus();
+              window.open("", "aaaa");
               return;
           }
-          newW = window.open(link, "a");
+          if (window.location.host === "www.bilibili.com") {
+              // 不跨源
+              newW = window.open(new URL(link).pathname, "aaaa");
+          }
+          else {
+              newW = window.open(link, "aaaa");
+          }
+          setTimeout(() => {
+              // @ts-ignore
+              newW.SRCWindowName = window.name;
+          }, 1000);
       }
       const linkMapVisited = new Map();
       setInterval(() => {
@@ -103,9 +137,15 @@
   }
   function listen() {
       onMessage((msg) => {
-          log("load bv: " + msg);
-          window.player.reload({ bvid: msg });
+          const [bvid, SRCWindowName] = msg.split("-");
+          log("load bv: " + bvid);
+          window.player.reload({ bvid: bvid });
+          window.SRCWindowName = SRCWindowName;
       });
+      BC.onmessage = (e) => {
+          log("???");
+          console.log(e);
+      };
   }
 
   // 空格事件
@@ -417,6 +457,7 @@
       // 视频播放页加载触屏优化
       registerTouchEnv();
       listen();
+      injectAddBTN();
   }
   else {
       // 其他页劫持页面跳转链接
