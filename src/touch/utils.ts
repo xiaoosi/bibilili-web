@@ -9,3 +9,7 @@ export function isShowDetail() {
 export function log(str: string) {
   console.log("bibilili-web: ", str);
 }
+
+export function isInVideoPage() {
+  return window.location.href.includes("www.bilibili.com/video/");
+}

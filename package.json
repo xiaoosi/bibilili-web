@@ -8,7 +8,7 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs && cat ./tamper.js ./build/index.js > ./build/tamper-script.js "
+    "build": "rollup -c --bundleConfigAsCjs && cat ./tamper.js ./build/index.js > ./build/tamper-script.js && rm ./build/index.js"
   },
   "devDependencies": {
     "rollup": "^3.17.0",

@@ -1,36 +1,12 @@
-import {
-  fullScreen,
-  hideDetail,
-  pause,
-  play,
-  showDetailMoment,
-  showHideBullet,
-} from "./Actions";
-import { VideoEle } from "./Ele";
-import { registerTapEvent, registerTouchMoveEvent } from "./Events";
-import { isPlay, isShowDetail, log } from "./utils";
+import { registerTouchEnv } from "./touch/index";
+import { isInVideoPage, log } from "./touch/utils";
 log("load script~");
-/*  点击出现进度条
- *  双击暂停
- *  双指单击显示弹幕
- *  双指双击全屏/退出全屏
- *  上下滑动调节音量
- *  左右滑动调节进度
- *  长按快进
- */
-registerTapEvent(VideoEle, {
-  onTap1() {
-    isShowDetail() ? hideDetail() : showDetailMoment();
-  },
-  onDoubleTap1() {
-    isPlay() ? pause() : play();
-  },
-  onTap2() {
-    showHideBullet();
-  },
-  onDoubleTap2() {
-    fullScreen();
-  },
-});
-registerTouchMoveEvent(VideoEle);
+
+if (isInVideoPage()) {
+  // 视频播放页加载触屏优化
+  registerTouchEnv();
+}else{
+  // 其他页劫持页面跳转链接
+}
+
 log("已装载");
