@@ -1,4 +1,4 @@
-import { ProgressEleLazy, VideoEle } from "./Ele";
+import { ProgressEleLazy } from "./Ele";
 import { ArrowRightDown, ArrowRightUp } from "./SourceEvent";
 
 export interface OnEventMap {
@@ -160,7 +160,7 @@ export function registerTouchMoveEvent(target: Element) {
         state = "situ";
         startFastFor();
       }
-    }, 1000);
+    }, 500);
   };
   const onTouchMove = (e: TouchEvent) => {
     if (e.targetTouches.length !== 1) return;

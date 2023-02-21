@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  try to take over the world!
 // @author       xiaoosi
-// @match        *://www.bilibili.com/video/*
+// @match        *://*.bilibili.com/*
 // @icon         <$ICON$>
 // @grant        none
 // ==/UserScript==
@@ -12,14 +12,22 @@
 (function () {
   'use strict';
 
-  const BiliPlayerEle = getElementSafe(document, "#bilibili-player");
-  const ContentEle = getElementSafe(BiliPlayerEle, ".bpx-player-container");
-  const VideoAreaEle = getElementSafe(ContentEle, ".bpx-player-video-area");
-  const VideoEle = getElementSafe(VideoAreaEle, [
-      ".bpx-player-primary-area video",
-      ".bpx-player-primary-area bwp-video",
-  ]);
-  const ProgressEleLazy = () => getElementSafe(BiliPlayerEle, ".bpx-player-progress-wrap");
+  function getEle() {
+      const BiliPlayerEle = getElementSafe(document, "#bilibili-player");
+      const ContentEle = getElementSafe(BiliPlayerEle, ".bpx-player-container");
+      const VideoAreaEle = getElementSafe(ContentEle, ".bpx-player-video-area");
+      const VideoEle = getElementSafe(VideoAreaEle, [
+          ".bpx-player-primary-area video",
+          ".bpx-player-primary-area bwp-video",
+      ]);
+      return {
+          BiliPlayerEle,
+          ContentEle,
+          VideoAreaEle,
+          VideoEle,
+      };
+  }
+  const ProgressEleLazy = () => getElementSafe(getEle().BiliPlayerEle, ".bpx-player-progress-wrap");
   function getElementSafe(parent, query) {
       let queryList = [];
       if (typeof query === "string") {
@@ -34,6 +42,70 @@
               return out;
       }
       throw new Error("get element error: " + JSON.stringify(queryList));
+  }
+
+  function isPlay() {
+      return !getEle().ContentEle.classList.contains("bpx-state-paused");
+  }
+  function isShowDetail() {
+      return !getEle().ContentEle.classList.contains("bpx-state-no-cursor");
+  }
+  function log(str) {
+      console.log("%cbibilili-web:", "color: #fff; border-radius: 5px; padding: 0 5px; background-color: #c0341d;", str);
+  }
+  function isInVideoPage() {
+      return window.location.href.includes("www.bilibili.com/video/");
+  }
+
+  class Channel {
+      constructor(w) {
+          this.window = w;
+      }
+      sendMessage(msg) {
+          this.window.location.hash = msg;
+      }
+  }
+  function onMessage(f) {
+      window.addEventListener("hashchange", (e) => {
+          f(location.hash.slice(1));
+      });
+  }
+
+  // 优化页面跳转,实现单播放实例
+  function intercept() {
+      // 劫持所有跳转到video页的链接
+      let newW = null;
+      function openInOneTab(link) {
+          var _a;
+          if (newW && !newW.closed) {
+              const bvid = (_a = link.split("/").filter((e) => e.startsWith("BV"))) === null || _a === void 0 ? void 0 : _a[0];
+              new Channel(newW).sendMessage(bvid);
+              newW.focus();
+              return;
+          }
+          newW = window.open(link, "a");
+      }
+      const linkMapVisited = new Map();
+      setInterval(() => {
+          const linkList = document.querySelectorAll(`a[href*="bilibili.com/video"]`);
+          linkList.forEach((l) => {
+              if (!linkMapVisited.has(l)) {
+                  l.addEventListener("click", (e) => {
+                      e.preventDefault();
+                      e.stopImmediatePropagation();
+                      const link = l.href;
+                      openInOneTab(link);
+                  }, true);
+                  linkMapVisited.set(l, true);
+              }
+          });
+      }, 500);
+  }
+  function listen() {
+      onMessage((msg) => {
+          log("load bv: " + msg);
+          window.player.reload({ bvid: msg });
+      });
   }
 
   // 空格事件
@@ -71,10 +143,10 @@
   });
   // 鼠标移动事件，可以显示视频信息
   const moveMouseOnVideo = () => {
-      const position = VideoEle.getBoundingClientRect();
+      const position = getEle().VideoEle.getBoundingClientRect();
       const x = Math.round(position.x + 2);
       const y = Math.round(position.y + 2);
-      VideoEle.dispatchEvent(new MouseEvent("mousemove", {
+      getEle().VideoEle.dispatchEvent(new MouseEvent("mousemove", {
           clientX: x,
           clientY: y,
           bubbles: true,
@@ -85,7 +157,7 @@
   };
   // 鼠标移出，detail隐藏
   const leaveMouseFromVidee = () => {
-      VideoAreaEle.dispatchEvent(new MouseEvent("mouseleave"));
+      getEle().VideoAreaEle.dispatchEvent(new MouseEvent("mouseleave"));
   };
 
   // 播放
@@ -258,7 +330,7 @@
                   state = "situ";
                   startFastFor();
               }
-          }, 1000);
+          }, 500);
       };
       const onTouchMove = (e) => {
           if (e.targetTouches.length !== 1)
@@ -314,41 +386,42 @@
       target.addEventListener("touchcancel", onTouchEnd);
   }
 
-  function isPlay() {
-      return !ContentEle.classList.contains("bpx-state-paused");
-  }
-  function isShowDetail() {
-      return !ContentEle.classList.contains("bpx-state-no-cursor");
-  }
-  function log(str) {
-      console.log("bibilili-web: ", str);
-  }
-
-  log("load script~");
   /*  点击出现进度条
    *  双击暂停
-   *  双指点击显示弹幕
-   *  三指单机全屏/退出全屏
+   *  双指单击显示弹幕
+   *  双指双击全屏/退出全屏
    *  上下滑动调节音量
    *  左右滑动调节进度
    *  长按快进
-   *
    */
-  registerTapEvent(VideoEle, {
-      onTap1() {
-          isShowDetail() ? hideDetail() : showDetailMoment();
-      },
-      onDoubleTap1() {
-          isPlay() ? pause() : play();
-      },
-      onTap2() {
-          showHideBullet();
-      },
-      onDoubleTap2() {
-          fullScreen();
-      },
-  });
-  registerTouchMoveEvent(VideoEle);
+  function registerTouchEnv() {
+      registerTapEvent(getEle().VideoEle, {
+          onTap1() {
+              isShowDetail() ? hideDetail() : showDetailMoment();
+          },
+          onDoubleTap1() {
+              isPlay() ? pause() : play();
+          },
+          onTap2() {
+              showHideBullet();
+          },
+          onDoubleTap2() {
+              fullScreen();
+          },
+      });
+      registerTouchMoveEvent(getEle().VideoEle);
+  }
+
+  log("load script~");
+  if (isInVideoPage()) {
+      // 视频播放页加载触屏优化
+      registerTouchEnv();
+      listen();
+  }
+  else {
+      // 其他页劫持页面跳转链接
+      intercept();
+  }
   log("已装载");
 
 })();

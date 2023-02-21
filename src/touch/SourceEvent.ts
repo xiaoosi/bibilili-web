@@ -1,4 +1,4 @@
-import { ContentEle, VideoAreaEle, VideoEle } from "./Ele";
+import { getEle } from "./Ele";
 
 // 空格事件
 export const spaceDownEnv = new KeyboardEvent("keydown", {
@@ -39,10 +39,10 @@ export const ArrowRightUp = new KeyboardEvent("keyup", {
 
 // 鼠标移动事件，可以显示视频信息
 export const moveMouseOnVideo = () => {
-  const position = VideoEle.getBoundingClientRect();
+  const position = getEle().VideoEle.getBoundingClientRect();
   const x = Math.round(position.x + 2);
   const y = Math.round(position.y + 2);
-  VideoEle.dispatchEvent(
+  getEle().VideoEle.dispatchEvent(
     new MouseEvent("mousemove", {
       clientX: x,
       clientY: y,
@@ -56,5 +56,5 @@ export const moveMouseOnVideo = () => {
 
 // 鼠标移出，detail隐藏
 export const leaveMouseFromVidee = () => {
-  VideoAreaEle.dispatchEvent(new MouseEvent("mouseleave"));
+  getEle().VideoAreaEle.dispatchEvent(new MouseEvent("mouseleave"));
 };

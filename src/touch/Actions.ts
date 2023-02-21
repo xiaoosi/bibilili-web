@@ -1,4 +1,3 @@
-import { ContentEle, VideoAreaEle } from "./Ele";
 import {
   keyDDownEnv,
   keyDUpEnv,
@@ -6,8 +5,6 @@ import {
   keyFUpEnv,
   leaveMouseFromVidee,
   moveMouseOnVideo,
-  spaceDownEnv,
-  spaceUpEnv,
 } from "./SourceEvent";
 
 // 播放

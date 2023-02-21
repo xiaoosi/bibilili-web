@@ -7,7 +7,7 @@ declare global {
       getCurrentTime: () => number;
       setVolume: (v: number) => void;
       getVolume: () => number;
-
+      reload: (option: { bvid: string; p?: number }) => any;
     };
   }
 }

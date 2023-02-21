@@ -6,7 +6,7 @@ import {
   showDetailMoment,
   showHideBullet,
 } from "./Actions";
-import { VideoEle } from "./Ele";
+import { getEle } from "./Ele";
 import { registerTapEvent, registerTouchMoveEvent } from "./Events";
 import { isPlay, isShowDetail } from "./utils";
 
@@ -20,7 +20,7 @@ import { isPlay, isShowDetail } from "./utils";
  */
 
 export function registerTouchEnv() {
-  registerTapEvent(VideoEle, {
+  registerTapEvent(getEle().VideoEle, {
     onTap1() {
       isShowDetail() ? hideDetail() : showDetailMoment();
     },
@@ -34,5 +34,5 @@ export function registerTouchEnv() {
       fullScreen();
     },
   });
-  registerTouchMoveEvent(VideoEle);
+  registerTouchMoveEvent(getEle().VideoEle);
 }
