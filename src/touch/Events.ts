@@ -1,4 +1,4 @@
-import { ProgressEleLazy } from "./Ele";
+import { ProgressEleLazy } from "../Ele";
 import { ArrowRightDown, ArrowRightUp } from "./SourceEvent";
 
 export interface OnEventMap {

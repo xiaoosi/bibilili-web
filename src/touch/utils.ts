@@ -1,4 +1,4 @@
-import { getEle } from "./Ele";
+import { getEle } from "../Ele";
 
 export function isPlay() {
   return !getEle().ContentEle.classList.contains("bpx-state-paused");

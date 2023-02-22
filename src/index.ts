@@ -1,5 +1,6 @@
 import { injectAddBTN } from "./jump/back-btn";
 import { intercept, listen } from "./jump/index";
+import { resetStyle } from "./style/index";
 import { registerTouchEnv } from "./touch/index";
 import { isInVideoPage, log } from "./touch/utils";
 log("load script~");
@@ -9,6 +10,7 @@ if (isInVideoPage()) {
   registerTouchEnv();
   listen();
   injectAddBTN();
+  resetStyle();
 } else {
   // 其他页劫持页面跳转链接
   intercept();

@@ -6,7 +6,7 @@ import {
   showDetailMoment,
   showHideBullet,
 } from "./Actions";
-import { getEle } from "./Ele";
+import { getEle } from "../Ele";
 import { registerTapEvent, registerTouchMoveEvent } from "./Events";
 import { isPlay, isShowDetail } from "./utils";
 

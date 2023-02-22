@@ -1,4 +1,4 @@
-import { getEle } from "./Ele";
+import { getEle } from "../Ele";
 
 // 空格事件
 export const spaceDownEnv = new KeyboardEvent("keydown", {

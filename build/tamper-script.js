@@ -12,19 +12,6 @@
 (function () {
   'use strict';
 
-  function injectAddBTN() {
-      const btn = document.createElement("button");
-      btn.innerText = "返回";
-      btn.style.setProperty("position", "fixed");
-      btn.style.setProperty("top", "0");
-      btn.style.setProperty("bottom", "0");
-      btn.addEventListener("click", () => {
-          window.open("", window.SRCWindowName);
-          window.player.pause();
-      });
-      document.body.appendChild(btn);
-  }
-
   function getEle() {
       const BiliPlayerEle = getElementSafe(document, "#bilibili-player");
       const ContentEle = getElementSafe(BiliPlayerEle, ".bpx-player-container");
@@ -55,6 +42,38 @@
               return out;
       }
       throw new Error("get element error: " + JSON.stringify(queryList));
+  }
+  const videoboxLazy = () => getElementSafe(document, ".player-wrap");
+  const bilibiliHeaderLazy = () => getElementSafe(document, "#biliMainHeader");
+  const appLazy = () => getElementSafe(document, "#app");
+
+  function injectAddBTN() {
+      //   添加返回按钮
+      const back = document.createElement("div");
+      back.innerHTML = `<svg height="50px" width="50px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 495 495" xml:space="preserve" fill="#000000" stroke="#000000" stroke-width="0.00495" transform="matrix(1, 0, 0, 1, 0, 0)"><g id="SVGRepo_iconCarrier"> <g>    <polygon style="fill:#ffffff;" points="247.5,334.58 291.894,379.119 320.224,350.881 247.5,277.92 217.179,247.5 247.5,217.08 320.224,144.119 291.894,115.881 247.5,160.419 160.703,247.5 "></polygon> </g> </g></svg>`;
+      back.classList.add("back-btn");
+      back.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.open("", window.SRCWindowName);
+          window.player.pause();
+      });
+      const style = document.createElement("style");
+      style.textContent = `.back-btn{
+    top: calc(50% - 25px);
+    left: 0;
+    transition: all .2s ease-in-out;
+    z-index: 100;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+  }
+  .bpx-state-no-cursor .back-btn{
+    display: none;
+  }
+  `;
+      document.head.appendChild(style);
+      getEle().VideoAreaEle.appendChild(back);
   }
 
   function isPlay() {
@@ -146,6 +165,64 @@
           log("???");
           console.log(e);
       };
+  }
+
+  function setStyles(ele, styles) {
+      Object.keys(styles).forEach((k) => {
+          ele.style.setProperty(k, styles[k]);
+      });
+  }
+  function hidden(query) {
+      const e = document.querySelector(query);
+      if (e) {
+          setStyles(e, {
+              display: "none",
+              top: "100vh",
+          });
+      }
+  }
+  function resetStyle() {
+      // 隐藏顶导
+      bilibiliHeaderLazy().style.setProperty("display", "none");
+      setStyles(appLazy(), {
+          "z-index": "101",
+          "margin-top": "100vh",
+          position: "absolute",
+      });
+      const styleForBody = document.createElement("style");
+      styleForBody.textContent = `body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}`;
+      document.head.appendChild(styleForBody);
+      hidden(".float-nav-exp");
+      hidden(".fixed-nav");
+      // 添加白屏遮罩
+      const background = document.createElement("div");
+      setStyles(background, {
+          width: "100vw",
+          height: "100vw",
+          "background-color": "#fff",
+          position: "fixed",
+          "z-index": "100",
+          left: "0",
+          top: "0",
+      });
+      document.body.appendChild(background);
+      const videoboxEle = videoboxLazy();
+      setStyles(videoboxEle, {
+          position: "fixed",
+          left: "0",
+          top: "0",
+          "z-index": "1001",
+      });
+      // 请求全屏
+      //   window.addEventListener("pointerdown", (e) => {
+      //     if (!document.fullscreenElement) {
+      //       document.documentElement.requestFullscreen();
+      //     }
+      //   });
   }
 
   // 空格事件
@@ -458,6 +535,7 @@
       registerTouchEnv();
       listen();
       injectAddBTN();
+      resetStyle();
   }
   else {
       // 其他页劫持页面跳转链接
