@@ -43,6 +43,7 @@
       }
       throw new Error("get element error: " + JSON.stringify(queryList));
   }
+  const commentLazy = () => getElementSafe(document, "#comment");
   const videoboxLazy = () => getElementSafe(document, ".player-wrap");
   const bilibiliHeaderLazy = () => getElementSafe(document, "#biliMainHeader");
   const appLazy = () => getElementSafe(document, "#app");
@@ -169,8 +170,14 @@
 
   function setStyles(ele, styles) {
       Object.keys(styles).forEach((k) => {
-          ele.style.setProperty(k, styles[k]);
+          var _a;
+          (_a = ele === null || ele === void 0 ? void 0 : ele.style) === null || _a === void 0 ? void 0 : _a.setProperty(k, styles[k]);
       });
+  }
+  function addStyles(style) {
+      const styleForBody = document.createElement("style");
+      styleForBody.textContent = style;
+      document.head.appendChild(styleForBody);
   }
   function hidden(query) {
       const e = document.querySelector(query);
@@ -194,7 +201,38 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-}`;
+}
+#comment{
+  margin: 0 !important;
+  padding: 10px;
+  height: 100vh;
+  bottom: 0;
+}
+.comment{
+  height: 100% !important;
+}
+.bili-comment{
+  height: 100% !important;
+}
+.comment-container{
+  height: 100% !important;
+  overflow-y: scroll;
+}
+.comment-container .reply-header{
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 110;
+}
+.comment-container .main-reply-box{
+  position: fixed;
+    background-color: white;
+    bottom: 20px;
+    right: 0;
+    z-index: 110;
+    padding: 10px;
+}
+`;
       document.head.appendChild(styleForBody);
       hidden(".float-nav-exp");
       hidden(".fixed-nav");
@@ -215,6 +253,7 @@
           position: "fixed",
           left: "0",
           top: "0",
+          bottom: "0",
           "z-index": "1001",
       });
       // 请求全屏
@@ -223,6 +262,37 @@
       //       document.documentElement.requestFullscreen();
       //     }
       //   });
+      // 右侧显示弹幕
+      const resizeComment = () => {
+          const { width, height } = getEle().BiliPlayerEle.getBoundingClientRect();
+          const commentEle = commentLazy();
+          setStyles(commentEle, {
+              width: `calc(100vw - ${width}px)`,
+              position: "fixed",
+              left: width + "px",
+              top: "0",
+          });
+          setStyles(document.querySelector(".main-reply-box"), {
+              width: `calc(100vw - ${width}px)`,
+          });
+          setStyles(document.querySelector(".video-container-v1"), {
+              top: `${height}px`,
+              height: `calc(100vh - ${height}px)`,
+          });
+      };
+      window.addEventListener("resize", resizeComment);
+      const videoPositon = getEle().BiliPlayerEle.getBoundingClientRect();
+      addStyles(`.main-reply-box{
+    width: calc(100vw - ${videoPositon.width}px);
+  }
+  .video-container-v1{
+    position: fixed !important;
+    top: ${videoPositon.height}px;
+    height: calc(100vh - ${videoPositon.height}px);
+  }
+  `);
+      // const reportPositon = videoboxReportLazy()?.getBoundingClientRect();
+      resizeComment();
   }
 
   // 空格事件
